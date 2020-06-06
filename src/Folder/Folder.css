@@ -1,0 +1,27 @@
+.Folder__item{
+    width: 100%;
+    height: 80px;
+    border-bottom:1px solid black;
+    border-right:1px solid black; ;
+    display: flex;
+    justify-content: center;
+}
+
+.Folder__item a{
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    line-height: 80px;
+    text-align: center;
+    color:black;
+    
+    background-color:rgb(239, 239, 239);
+}
+
+.Folder__item a:hover{
+    background-color:rgb(180, 180, 180);
+}
+
+.Folder__item .active{
+    background-color:rgb(180, 180, 180);
+}
