@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import './Selected.css';
 
 class Selected extends Component{
@@ -11,6 +12,10 @@ class Selected extends Component{
         </div>          
     );
   }
+}
+
+Selected.propTypes = {
+  content: PropTypes.string.isRequired
 }
 
 export default Selected;

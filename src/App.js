@@ -3,6 +3,9 @@ import {Route} from 'react-router-dom';
 import Header from './Header/Header';
 import Main from './Main/Main';
 import Sidebar from './Sidebar/Sidebar';
+import AddFolder from './AddFolder/AddFolder';
+import AddNote from './AddNote/AddNote';
+import NotefulContext from './NotefulContext';
 import './App.css';
 
 class App extends Component{
@@ -15,57 +18,102 @@ class App extends Component{
     }
   }
 
+  displayError(err){
+    //todo 
+  }
+
   componentDidMount(){
+    //make fetch request to JSON server
     this.setState({
-      folders: this.props.store.folders,
-      notes: this.props.store.notes,
+    });
+    const foldersEndpoint = 'http://localhost:9090/folders';
+    fetch(foldersEndpoint)
+    .then(response => {
+      if(!response.ok){
+        throw new Error('Something went wrong');
+      }
+      return response;
+    })
+    .then(response => response.json())
+    .then(data => {
+      this.setState({
+        folders: data
+      })
+    })
+    .catch(err => this.displayError(err));
+
+    const notesEndpoint = 'http://localhost:9090/notes';
+    fetch(notesEndpoint)
+    .then(response => {
+      if(!response.ok){
+        throw new Error('Something went wrong');
+      }
+      return response;
+    })
+    .then(response => response.json())
+    .then(data => {
+      this.setState({
+        notes: data
+      })
+    })
+    .catch(err => this.displayError(err));
+  }
+
+  addFolder = (folder) => {
+    this.setState({
+      folders: [...this.state.folders, folder]
     });
   }
 
-  handleAddFolder(){
-    //To do: generate random folder ID and name
-    
+  addNote = (note) => {
+    this.setState({
+      notes: [...this.state.notes, note]
+    });
   }
 
-  findFolderName(noteId){
-   let note = {};
-   let folder = {};
-    if(!this.state){
-      note = this.state.notes.find( note => noteId === note.id);
-      folder = this.state.folders.find( folder => note.folderId === folder.id);
-    }else{
-      note = this.props.store.notes.find( note => noteId === note.id);
-      folder = this.props.store.folders.find( folder => note.folderId === folder.id);
-    }
-    return folder.name;
+  deleteNote = (noteId) =>{
+    const newNotes = this.state.notes.filter(note => note.id !== noteId)
+      this.setState(
+        {
+          notes: newNotes
+        }
+      );
   }
-
-  retrieveNote(noteId){
-    return this.state.notes.find( note => noteId === note.id);
-  }
-
 
   render(){
-    const {folders, notes} = this.state;
+
+    const contextValue = {
+      folders: this.state.folders,
+      notes: this.state.notes,
+      addFolder: this.addFolder,
+      addNote: this.addNote,
+      deleteNote: this.deleteNote,
+    }
+   
     return (
         <main className='App'>
           <Header />
-          <div className="App__main">
-            {/* home / */}
-            <Route exact path='/' render={()=> <Sidebar folders={folders} />}/>
-            <Route exact path='/' render={()=> <Main notes={notes}/>}/>
+          <NotefulContext.Provider value={contextValue}>
+            <div className="App__main">
+              {/* home / */}
+              <Route exact path='/' component={Sidebar}/>
+              <Route exact path='/' component={Main}/>
 
-            {/* dynamic folder /folder/folderId */}
-            <Route path='/folder/:id' render={()=> <Sidebar folders={folders} />}/>
-            <Route path='/folder/:id' render={(props)=> <Main notes={notes} folderId={props.match.params.id} />}/>
+              {/* dynamic folder /folder/folderId */}
+              <Route path='/folder/:id' component={Sidebar}/>
+              <Route path='/folder/:id' component={Main}/>
 
-            {/* dynamic note /note/id */}
-            <Route 
-              path='/note/:id' 
-              render={(props)=> <Sidebar folderName={this.findFolderName(props.match.params.id)}/>}/>
-            <Route path='/note/:id' render={(props)=> <Main selected={this.retrieveNote(props.match.params.id)}/>}/>
-            
-          </div>
+
+              {/* dynamic note /note/id */}
+              <Route path='/note/:id' component={Sidebar}/>
+              <Route path='/note/:id' component={Main}/>
+
+              
+              <Route path='/add-folder' component={AddFolder}/>
+              <Route path='/add-note' component={AddNote}/>
+
+            </div>
+            </NotefulContext.Provider>
         </main>
     );
   }
