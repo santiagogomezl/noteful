@@ -44,7 +44,7 @@ class AddNote extends Component{
   }
 
   displayError(err){
-    console.log(err)
+    alert(err);
   }
 
 

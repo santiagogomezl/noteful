@@ -19,7 +19,7 @@ class App extends Component{
   }
 
   displayError(err){
-    //todo 
+    alert(err);
   }
 
   componentDidMount(){
@@ -46,7 +46,7 @@ class App extends Component{
     fetch(notesEndpoint)
     .then(response => {
       if(!response.ok){
-        throw new Error('Something went wrong');
+        throw new Error('Something went wrong. Try again later');
       }
       return response;
     })

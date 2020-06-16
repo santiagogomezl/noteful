@@ -18,7 +18,7 @@ class AddFolder extends Component{
   }
 
   displayError(err){
-    //todo
+    alert(err);
   }
 
   handleSubmit(event, callback){
