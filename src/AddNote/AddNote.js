@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import './AddNote.css';
 import NotefulContext from '../NotefulContext';
+import config from '../config';
 
 class AddNote extends Component{
   static contextType = NotefulContext;
@@ -50,24 +51,23 @@ class AddNote extends Component{
 
   handleSubmit(event, callback){
     event.preventDefault();
-    const id = ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-      );
+
     const name = this.state.noteTitle.value;
     const content = this.state.content.value;
-    const modified = new Date().toISOString();
-    const folderId = this.state.folderId.value
+    //const modified = new Date().toISOString();
+    const folder_id = this.state.folderId.value
 
-    const note = {id, name, modified, folderId, content}
+    const note = { name, folder_id, content}
     const options = {
       method: 'POST',
       body: JSON.stringify(note),
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        'Authorization': `Bearer ${config.API_KEY}`
       }
     };
 
-    fetch('http://localhost:9090/notes', options)
+    fetch(`${config.API_ENDPOINT}api/notes`, options)
     .then(response => {
         if(!response.ok){
           throw new Error('Something went wrong');

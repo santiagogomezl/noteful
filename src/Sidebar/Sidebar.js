@@ -9,9 +9,9 @@ class Sidebar extends Component{
   static contextType = NotefulContext;
 
   findFolderName(noteId){
-    const note = this.context.notes.find( note => noteId === note.id);
+    const note = this.context.notes.find( note => note.id.toString() === noteId );
     if(note){
-      const folder = this.context.folders.find( folder => note.folderId === folder.id);    
+      const folder = this.context.folders.find( folder => folder.id === note.folder_id );    
       return folder.name
     }
   }

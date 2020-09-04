@@ -3,6 +3,8 @@ import {Link} from 'react-router-dom';
 import './Note.css';
 import NotefulContext from '../NotefulContext';
 import PropTypes from 'prop-types';
+import config from '../config';
+
 
 class Note extends Component{
     static contextType = NotefulContext;
@@ -12,10 +14,11 @@ class Note extends Component{
       }
 
     deleteNoteRequest(noteId, callback){
-        fetch(`http://localhost:9090/notes/${noteId}`, {
+        fetch(`${config.API_ENDPOINT}api/notes/${noteId}`, {
             method: 'DELETE',
             headers: {
-                'content-type': 'application/json'
+                'content-type': 'application/json',
+                'Authorization': `Bearer ${config.API_KEY}`
             }
         })
         .then(response => {
@@ -24,21 +27,18 @@ class Note extends Component{
             }
             return response;
           })
-          .then(response => response.json())
-          .then(data => {
-                callback(noteId)
-                if(this.props.history){
-                    this.props.history.push('/')
-                }
+            .then(data => {
+            callback(noteId);
+            this.props.history.push('/');
             }
-          )
-          .catch(err => this.displayError(err));
+         )
+         .catch(err => this.displayError(err));
     }
 
     readDate(timeStamp){
         const d = new Date(timeStamp);
         const day = d.getDate();
-        const month = d.getMonth();
+        const month = d.getMonth()+1;
         const year = d.getUTCFullYear();
         return `Last modified on ${month}/${day}/${year}`;
     }  
@@ -66,7 +66,7 @@ class Note extends Component{
 }
 
 Note.propTypes = {
-    id: PropTypes.string.isRequired,
+    id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
     modified: PropTypes.string.isRequired
 }

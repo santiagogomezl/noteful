@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import './AddFolder.css';
 import NotefulContext from '../NotefulContext';
+import config from '../config';
+
 
 class AddFolder extends Component{
   static contextType = NotefulContext;
@@ -24,20 +26,18 @@ class AddFolder extends Component{
   handleSubmit(event, callback){
     event.preventDefault();
     const name = this.state.folderName.value
-    const id = ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-      (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-    );
 
-    const folder = {id, name}
+    const folder = { name }
     const options = {
       method: 'POST',
       body: JSON.stringify(folder),
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        'Authorization': `Bearer ${config.API_KEY}`
       }
     };
 
-    fetch('http://localhost:9090/folders', options)
+    fetch(`${config.API_ENDPOINT}api/folders`, options)
     .then(response => {
         if(!response.ok){
           throw new Error('Something went wrong');

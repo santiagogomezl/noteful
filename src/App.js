@@ -6,6 +6,7 @@ import Sidebar from './Sidebar/Sidebar';
 import AddFolder from './AddFolder/AddFolder';
 import AddNote from './AddNote/AddNote';
 import NotefulContext from './NotefulContext';
+import config from './config';
 import './App.css';
 
 class App extends Component{
@@ -23,18 +24,22 @@ class App extends Component{
   }
 
   componentDidMount(){
-    //make fetch request to JSON server
     this.setState({
     });
-    const foldersEndpoint = 'http://localhost:9090/folders';
-    fetch(foldersEndpoint)
-    .then(response => {
-      if(!response.ok){
-        throw new Error('Something went wrong');
+    const foldersEndpoint = `${config.API_ENDPOINT}api/folders`;
+    fetch(foldersEndpoint, {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${config.API_KEY}`
       }
-      return response;
     })
-    .then(response => response.json())
+    .then(res => {
+        if (!res.ok) {
+          return res.json().then(error => Promise.reject(error))
+        }
+        return res.json()
+    })
     .then(data => {
       this.setState({
         folders: data
@@ -42,21 +47,27 @@ class App extends Component{
     })
     .catch(err => this.displayError(err));
 
-    const notesEndpoint = 'http://localhost:9090/notes';
-    fetch(notesEndpoint)
-    .then(response => {
-      if(!response.ok){
-        throw new Error('Something went wrong. Try again later');
+    const notesEndpoint = `${config.API_ENDPOINT}api/notes`;
+    fetch(notesEndpoint, {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${config.API_KEY}`
       }
-      return response;
     })
-    .then(response => response.json())
+    .then(res => {
+        if (!res.ok) {
+          return res.json().then(error => Promise.reject(error))
+        }
+        return res.json()
+    })
     .then(data => {
       this.setState({
         notes: data
       })
     })
     .catch(err => this.displayError(err));
+
   }
 
   addFolder = (folder) => {

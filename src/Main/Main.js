@@ -10,7 +10,7 @@ class Main extends Component{
     static contextType = NotefulContext;
 
     getNote(noteId){
-        return this.context.notes.find( note => noteId === note.id);
+        return this.context.notes.find( note => noteId === note.id.toString());
       }
   
   render(){
@@ -35,8 +35,8 @@ class Main extends Component{
         const folderId = this.props.match.params.id;
         content = this.context.notes.map((note, i) => {
             const key = `${note.name}-${i}`;
-            if(note.folderId === folderId){
-                return(<Note key={key} {...note}/>)
+            if(note.folder_id.toString() === folderId){
+                return(<Note key={key} {...note} history={this.props.history}/>)
             }
         }) 
         content = [content, addNote];
@@ -44,7 +44,7 @@ class Main extends Component{
     }else if(this.context.notes){
         content = this.context.notes.map((note, i) => {
             const key = `${note.name}-${i}`;
-            return(<Note key={key} {...note}/>);
+            return(<Note key={key} {...note} history={this.props.history}/>);
         })
         content = [content, addNote]; 
     }
